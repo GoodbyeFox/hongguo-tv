@@ -95,16 +95,34 @@ jobs:
       - name: Verify standard and MPV dependency isolation
         run: gradle --no-daemon --max-workers=1 -p android :app:verifyPlayerDependencyIsolation
       - name: Restore signing key
+        env:
+          SECRET_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SECRET_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          SECRET_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          test -n "$ANDROID_KEYSTORE_BASE64" || { echo "Missing release signing key" >&2; exit 1; }
-          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/hongguo-release.keystore"
+          if [[ -n "$ANDROID_KEYSTORE_BASE64" ]]; then
+            printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/hongguo-release.keystore"
+            {
+              echo "ANDROID_KEYSTORE_PASSWORD=$SECRET_KEYSTORE_PASSWORD"
+              echo "ANDROID_KEY_ALIAS=$SECRET_KEY_ALIAS"
+              echo "ANDROID_KEY_PASSWORD=$SECRET_KEY_PASSWORD"
+            } >> "$GITHUB_ENV"
+          else
+            # Fork builds without the release keystore secrets: sign with a
+            # throwaway key generated for this run. Such APKs cannot upgrade
+            # an installation signed with a different key; uninstall first.
+            echo "::warning::No ANDROID_KEYSTORE_BASE64 secret; signing with a per-run throwaway key"
+            keytool -genkeypair -keystore "$RUNNER_TEMP/hongguo-release.keystore" -storetype PKCS12               -alias hongguo-fork -keyalg RSA -keysize 2048 -validity 10000               -storepass hongguo-fork -keypass hongguo-fork -dname "CN=hongguo-fork, O=fork, C=CN"
+            {
+              echo "ANDROID_KEYSTORE_PASSWORD=hongguo-fork"
+              echo "ANDROID_KEY_ALIAS=hongguo-fork"
+              echo "ANDROID_KEY_PASSWORD=hongguo-fork"
+            } >> "$GITHUB_ENV"
+          fi
           chmod 600 "$RUNNER_TEMP/hongguo-release.keystore"
       - name: Build release APK
         env:
           ANDROID_KEYSTORE_FILE: ${{ runner.temp }}/hongguo-release.keystore
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           # Package the two flavors in separate Gradle invocations. AGP's
           # native-library splitter can race when standard and MPV packaging
