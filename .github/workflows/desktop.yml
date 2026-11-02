@@ -10,7 +10,6 @@ on:
         required: true
   push:
     branches: ["codex/dual-player-editions"]
-    tags: ["v*"]
     paths: ["desktop/**", "core/**", "scripts/*desktop*", "tests/test_desktop_release.py", "docs/desktop*", ".github/workflows/desktop.yml"]
   pull_request:
     paths: ["desktop/**", "core/**", "scripts/*desktop*", "tests/test_desktop_release.py", "docs/desktop*", ".github/workflows/desktop.yml"]
