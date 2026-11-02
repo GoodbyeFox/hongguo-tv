@@ -18,9 +18,9 @@
 </table>
 
 - [Android TV 最新正式版本](https://github.com/aston314/hongguo-tv-releases/releases/latest)
-- [LG webOS 测试版 `.ipk`](https://github.com/aston314/hongguo-tv-releases/releases/tag/webos-v0.2.140-test.25)
+- [LG webOS 测试版 `.ipk`](https://github.com/aston314/hongguo-tv-releases/releases/tag/webos-v0.2.141-test.25)
 - [Linux x86_64 AppImage 测试版](https://github.com/aston314/hongguo-tv-releases/releases/tag/linux-v0.2.139-test.1)
-- [桌面版下载（macOS / Windows）](https://github.com/aston314/hongguo-tv-releases/releases/tag/desktop-v0.2.140)
+- [桌面版下载（macOS / Windows）](https://github.com/aston314/hongguo-tv-releases/releases/tag/desktop-v0.2.141)
 
 ## 我的其他作品
 
@@ -44,7 +44,9 @@
 | **标准版** | **`hongguo-tv-版本号.apk`**（文件名不含 `mpv`） | HTML5 主播放；确认不支持或播放失败时有限切换到 Media3，仍失败则回到 HTML5 |
 | **MPV 版** | **`hongguo-tv-mpv-版本号.apk`**（文件名含 `mpv`） | MPV 自动解码，可手动选择软件解码 |
 
-例如当前标准版是 `hongguo-tv-0.2.140.apk`；MPV 版是 `hongguo-tv-mpv-0.2.140.apk`。两个 APK 都支持 ARM64、ARMv7 和 x86_64，无需按设备架构另选安装包。
+例如当前标准版是 `hongguo-tv-0.2.141.apk`；MPV 版是 `hongguo-tv-mpv-0.2.141.apk`。两个 APK 都支持 ARM64、ARMv7 和 x86_64，无需按设备架构另选安装包。
+
+0.2.141 修复播放时提示 **`VIDEO_MODEL_EMPTY`** 无法播放的问题：上游对无签名的取源请求返回空响应，本版为取源请求补上签名，并保留签名原主机 → 签名备用主机 → 原无签名请求的有界兼容回退，不会无限重试。账号登录、清晰度选择和播放器行为不变；Android 标准版从 Media3 回到 HTML5 时保留音量和静音状态。参考记录显示补签后仍偶有上游空响应，如仍遇到请附播放诊断截图反馈。
 
 0.2.140 标准版恢复 **0.2.136 的播放逻辑与 Media3 1.8.0**，移除新增 NextLib/FFmpeg，继续保留 HTML5 主播放和有界 Media3 回退；需要额外软件解码能力时可选择 MPV 版，MPV 播放策略不变。播放控件仅在内容变化时刷新，隐藏时跳过无用的界面更新，以减少弹幕播放时的渲染负担；不改变弹幕运动、播放进度和预取逻辑。
 
@@ -77,7 +79,7 @@ Android 标准版、MPV 版和桌面版在未保存预取设置时，默认使�
 
 ## Linux 桌面版测试包
 
-Linux 当前下载保留 **0.2.139**。0.2.140 的 Ubuntu 24.04 / Debian 12 容器实播检查因测试片源连续返回 `VIDEO_MODEL_EMPTY` 未通过，暂未发布该平台新版。
+Linux 当前下载保留 **0.2.139**。0.2.140 的 Ubuntu 24.04 / Debian 12 容器实播检查因测试片源连续返回 `VIDEO_MODEL_EMPTY` 未通过；0.2.141 补上播放签名后，通过同样的容器实播检查即发布该平台新版。
 
 [下载 Linux x86_64 AppImage 测试版](https://github.com/aston314/hongguo-tv-releases/releases/tag/linux-v0.2.139-test.1)，在 **Assets** 中下载 `hongguo-desktop-0.2.139-x86_64.AppImage`。当前只提供 64 位 x86_64 包。
 
@@ -100,7 +102,7 @@ AppImage 已在 Ubuntu 24.04 和 Debian 12 容器中通过真实红果数据及�
 
 ## LG webOS 测试版
 
-[下载 webOS 测试版](https://github.com/aston314/hongguo-tv-releases/releases/tag/webos-v0.2.140-test.25)，在 Release 的 **Assets** 中下载 `hongguo-webos-0.2.140-test.25.ipk`。这是 LG webOS TV 的实验包，不是 Android APK，也不属于稳定版。
+[下载 webOS 测试版](https://github.com/aston314/hongguo-tv-releases/releases/tag/webos-v0.2.141-test.25)，在 Release 的 **Assets** 中下载 `hongguo-webos-0.2.141-test.25.ipk`。这是 LG webOS TV 的实验包，不是 Android APK，也不属于稳定版。
 
 **已有 LG 真机验证通过。** 用户在 [Issue #57](https://github.com/aston314/hongguo-tv-releases/issues/57) 回报：安装、启动、1080P 视频画面、声音、账号登录及原生遥控器滚轮均正常。
 
@@ -110,7 +112,7 @@ AppImage 已在 Ubuntu 24.04 和 Debian 12 容器中通过真实红果数据及�
 
 安装需要在电视上启用 **LG Developer Mode**，并使用 webOS 开发工具安装 `.ipk`；该用户使用 webOS Dev Manager 1.99.20 安装。当前下载仍为测试版，欢迎其他型号补充实测反馈。
 
-webOS 0.2.140 减少播放控件的重复界面刷新；保留启动页面设置、搜索建议切换、侧栏焦点改进，以及连续空播放响应的有限预算匿名身份恢复、现有 HTML5 播放、独立 JS 服务和 Range 边播边下，竖屏保持黑边。
+webOS 0.2.141 为播放取源请求补上签名，修复 `VIDEO_MODEL_EMPTY` 无法播放，并保留有界兼容回退。0.2.140 减少播放控件的重复界面刷新；保留启动页面设置、搜索建议切换、侧栏焦点改进，以及连续空播放响应的有限预算匿名身份恢复、现有 HTML5 播放、独立 JS 服务和 Range 边播边下，竖屏保持黑边。
 
 0.2.134 为 webOS 播放信息空响应加入有间隔、共用次数预算的恢复，并显示当前请求错误码与诊断；避免页面重复重试和旧预取覆盖错误。持续的上游故障仍会明确报错。
 
@@ -124,12 +126,12 @@ webOS 0.2.140 减少播放控件的重复界面刷新；保留启动页面设置
 
 ## macOS / Windows 桌面版
 
-[桌面版 0.2.140 下载](https://github.com/aston314/hongguo-tv-releases/releases/tag/desktop-v0.2.140)。无需安装 APK，选择对应平台的 ZIP：
+[桌面版 0.2.141 下载](https://github.com/aston314/hongguo-tv-releases/releases/tag/desktop-v0.2.141)。无需安装 APK，选择对应平台的 ZIP：
 
 | 平台 | 下载文件 | 要求 |
 | --- | --- | --- |
-| **macOS** | `hongguo-desktop-0.2.140-macos-universal.zip` | macOS 11 及以上，同包支持 Intel 和 Apple Silicon |
-| **Windows amd64 / x64** | `hongguo-desktop-0.2.140-windows-x64.zip` | 64 位 Intel / AMD 处理器，需要 Microsoft Edge WebView2 Runtime |
+| **macOS** | `hongguo-desktop-0.2.141-macos-universal.zip` | macOS 11 及以上，同包支持 Intel 和 Apple Silicon |
+| **Windows amd64 / x64** | `hongguo-desktop-0.2.141-windows-x64.zip` | 64 位 Intel / AMD 处理器，需要 Microsoft Edge WebView2 Runtime |
 
 macOS 解压后打开 **红果短剧.app**；Windows 请**完整解压整个文件夹**，打开 `红果短剧.exe`，保留 `hongguo-tv-core.exe` 在同一目录，不要单独启动核心程序。Windows 缺少 WebView2 时，请从 [微软官方页面](https://developer.microsoft.com/microsoft-edge/webview2/) 安装 Runtime。
 
